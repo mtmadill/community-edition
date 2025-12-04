@@ -4,13 +4,13 @@ name: learnhouse-ce
 
 services:
   learnhouse-app:
+    # This image source is much better than the one that failed!
     image: ghcr.io/learnhouse/app:pr-527-5b6e911
     container_name: learnhouse-app
     restart: unless-stopped
     env_file:
       - .env
     environment:
-      # HOSTNAME needs to be set explicitly for the container
       - HOSTNAME=0.0.0.0
     depends_on:
       db:
@@ -30,8 +30,15 @@ services:
     image: nginx:alpine
     container_name: learnhouse-nginx
     restart: unless-stopped
-    ports:
-      - "${HTTP_PORT:-80}:80"
+    # -------------------------------------------------------
+    # COOLIFY FIX: We removed "ports" and added "expose"
+    # This allows Coolify to route traffic without crashing Server 4.
+    # -------------------------------------------------------
+    expose:
+      - "80"
+    labels:
+      - "coolify.expose=80"
+    # -------------------------------------------------------
     volumes:
       - ./extra/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
