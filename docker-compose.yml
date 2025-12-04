@@ -4,7 +4,7 @@ name: learnhouse-ce
 
 services:
   learnhouse-app:
-    # This image source is much better than the one that failed!
+    # Using the specific PR build image you provided
     image: ghcr.io/learnhouse/app:pr-527-5b6e911
     container_name: learnhouse-app
     restart: unless-stopped
@@ -31,8 +31,9 @@ services:
     container_name: learnhouse-nginx
     restart: unless-stopped
     # -------------------------------------------------------
-    # COOLIFY FIX: We removed "ports" and added "expose"
-    # This allows Coolify to route traffic without crashing Server 4.
+    # COOLIFY COMPATIBILITY FIX
+    # We replaced 'ports' with 'expose' so Coolify's proxy
+    # can route traffic without crashing the server.
     # -------------------------------------------------------
     expose:
       - "80"
