@@ -4,8 +4,8 @@ name: learnhouse-ce
 
 services:
   learnhouse-app:
-    # Using the specific PR build image you provided
-    image: ghcr.io/learnhouse/app:pr-527-5b6e911
+    # CHANGED: Use the 'main' branch image instead of the broken PR build
+    image: ghcr.io/learnhouse/app:main
     container_name: learnhouse-app
     restart: unless-stopped
     env_file:
@@ -19,27 +19,25 @@ services:
         condition: service_healthy
     networks:
       - learnhouse-network
+    # CHANGED: Increased start_period to 120s to prevent "Unhealthy" crashes on slow startup
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/api/v1/health"]
       interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 120s
 
   nginx:
     image: nginx:alpine
     container_name: learnhouse-nginx
     restart: unless-stopped
     # -------------------------------------------------------
-    # COOLIFY COMPATIBILITY FIX
-    # We replaced 'ports' with 'expose' so Coolify's proxy
-    # can route traffic without crashing the server.
+    # COOLIFY FIX: Expose port 80 internally only
     # -------------------------------------------------------
     expose:
       - "80"
     labels:
       - "coolify.expose=80"
-    # -------------------------------------------------------
     volumes:
       - ./extra/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
