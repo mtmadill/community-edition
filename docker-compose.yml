@@ -5,7 +5,7 @@ name: learnhouse-ce
 services:
   learnhouse-app:
     # CHANGED: Use the 'main' branch image instead of the broken PR build
-    image: ghcr.io/learnhouse/app:main
+    image: ghcr.io/learnhouse/app:latest
     container_name: learnhouse-app
     restart: unless-stopped
     env_file:
